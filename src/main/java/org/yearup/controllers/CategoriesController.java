@@ -45,13 +45,13 @@ public class CategoriesController
         return categoryDao.getById(id);
     }
 
-    // the url to return all products in category 1 would look like this
-    // https://localhost:8080/categories/1/products
-    @GetMapping("{categoryId}/products")
+    // ✅the url to return all products in category 1 would look like this
+    // ✅ https://localhost:8080/categories/1/products
+    @GetMapping("{id}/products")
     public List<Product> getProductsById(@PathVariable int categoryId)
     {
-        // get a list of product by categoryId
-        return null;
+        //✅ get a list of product by categoryId
+        return productDao.listByCategoryId(categoryId);
     }
 
     // add annotation to call this method for a POST action
