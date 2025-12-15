@@ -72,7 +72,8 @@ public class CategoriesController
     @PreAuthorize("hasRole('ADMIN')")
     public void updateCategory(@PathVariable int id, @RequestBody Category category)
     {
-        // update the category by id
+        //✅ update the category by id
+        categoryDao.update(id, category);
     }
 
 
@@ -82,6 +83,7 @@ public class CategoriesController
     @PreAuthorize("hasRole('ADMIN')")
     public void deleteCategory(@PathVariable int id)
     {
-        // delete the category by id
+        //✅ delete the category by id
+        categoryDao.delete(id);
     }
 }
