@@ -22,7 +22,7 @@ public class CategoriesController
     private ProductDao productDao;
 
 
-    // create an Autowired controller to inject the categoryDao and ProductDao
+    // ✅create an Autowired controller to inject the categoryDao and ProductDao
     @Autowired
     public CategoriesController(CategoryDao categoryDao, ProductDao productDao){
         this.categoryDao = categoryDao;
@@ -33,11 +33,12 @@ public class CategoriesController
     @GetMapping("/api/records")
     public List<Category> getAll()
     {
-        // find and return all categories
-        return null;
+        // ✅find and return all categories
+        return categoryDao.getAllCategories();
     }
 
     // add the appropriate annotation for a get action
+    @GetMapping
     public Category getById(@PathVariable int id)
     {
         // get the category by id
