@@ -1,6 +1,8 @@
 package org.yearup.data.mysql;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
+import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.CategoryDao;
 import org.yearup.models.Category;
 
@@ -21,19 +23,74 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     public List<Category> getAllCategories()
     {
         // ✅get all categories
-      List<Category> categories = new ArrayList;
+        // Create an empty list to hold the objects we will retrieve.
+        List<Category> categories = new ArrayList<>();
 
-      return categories;
+        // This is the SQL SELECT statement we will run.
+        String sql = "SELECT * FROM categories";
+
+        // This is a "try-with-resources" block.
+        // It ensures that the Connection, Statement, and ResultSet are closed automatically after we are done.
+        try (Connection conn = dataSource.getConnection();
+             Statement stmt = conn.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            // Loop through each row in the ResultSet.
+            while (rs.next()) {
+                // Create a new object.
+                Category category = new Category();
+
+                category.setCategoryId(rs.getInt("categoryID"));
+
+                category.setName(rs.getString("categoryName"));
+
+                category.setDescription(rs.getString("Description"));
+
+                categories.add(category);
+            }
+
+        } catch (SQLException e) {
+            // If something goes wrong (SQL error), print the stack trace to help debug.
+            e.printStackTrace();
+        }
+
+        // Return the list of objects.
+        return categories;
     }
 
     @Override
     public int getById(int categoryId)
     {
             // get category by id
+            Category catID = new Category();
 
-            return categoryId;
+        try(Connection c = ds.getConnection();
+        PreparedStatement q = c.prepareStatement("""
+                SELECT
+                    category_id, name, description
+                FROM 
+                    categories
+                WHERE 
+                    category_id = ?
+                """)
+        ){
+
+        q.setInt(1,categoryId);
+
+        ResultSet r = q.executeQuery();
+
+        if(r.next()){
+            catID.setCategoryId(r.getInt("Category_id"));
+            catID.setName(r.getString("Name"));
+            catID.setDescription(r.getString("Description"));
+        }else{
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+    }catch(SQLException e){
+        System.out.println("Error getting category with id: " + categoryId);
     }
-
+        return catID;
+    }
     @Override
     public Category create(Category category)
     {
@@ -46,7 +103,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             // Set the first parameter (?)
-            stmt.setString(1, category.getCategoryName());
+            stmt.setString(1, category.getName());
 
             // Set the second parameter (?)
             stmt.setString(2, category.getDescription());
@@ -74,12 +131,14 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     public void update(int categoryId, Category category)
     {
         // update category
+
     }
 
     @Override
     public void delete(int categoryId)
     {
         // delete category
+
     }
 
     private Category mapRow(ResultSet row) throws SQLException
@@ -97,5 +156,4 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
 
         return category;
     }
-
 }
