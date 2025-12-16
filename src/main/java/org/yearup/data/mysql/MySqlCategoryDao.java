@@ -64,13 +64,13 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
             // get category by id
             Category catID = new Category();
 
-        try(Connection c = ds.getConnection();
+        try(Connection c = dataSource.getConnection();
         PreparedStatement q = c.prepareStatement("""
                 SELECT
                     category_id, name, description
-                FROM 
+                FROM
                     categories
-                WHERE 
+                WHERE
                     category_id = ?
                 """)
         ){
