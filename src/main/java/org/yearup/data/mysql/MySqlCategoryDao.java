@@ -132,29 +132,29 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     {
         // ✅update category
         try(Connection c = dataSource.getConnection();
-            PreparedStatement q = c.prepareStatement("""
+            PreparedStatement query = c.prepareStatement("""
                 UPDATE
                     categories
                 SET
                     Category_ID = COALESCE(?, Category_ID),
                     Name = COALESCE(?, Name),
-                    Description = COALESCE(?, Description)                    
+                    Description = COALESCE(?, Description)
                 WHERE
                     Category_ID = ?
                 """)){
             if(category.getCategoryId() == null || category.getCategoryId() == 0){
-                q.setNull(1, Types.INTEGER);
+                query.setNull(1, Types.INTEGER);
             }else{
-                q.setInt(1, category.getCategoryId());
+                query.setInt(1, category.getCategoryId());
             }
-            q.setString(2, category.getName());
-            q.setString(3, category.getDescription());
+            query.setString(2, category.getName());
+            query.setString(3, category.getDescription());
 
-            q.setInt(4, categoryId);
+            query.setInt(4, categoryId);
 
-            q.executeUpdate();
+            query.executeUpdate();
         }catch(SQLException e){
-            System.out.println("Error updating category");
+            System.out.println("Category not Updated" + e);
         }
     }
 
@@ -162,7 +162,19 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     public void delete(int categoryId)
     {
         // delete category
+        try(Connection c = dataSource.getConnection();
+            PreparedStatement query = c.prepareStatement("""
+                    DELETE
+                        categories
+                    WHERE
+                        category_ID = ?
+                    """)){
+            query.setInt(1, categoryId);
 
+            query.executeUpdate();
+        }catch(SQLException e){
+            System.out.println("Category not removed" + e);
+        }
     }
 
     private Category mapRow(ResultSet row) throws SQLException
@@ -179,5 +191,5 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         }};
 
         return category;
-    }
+    }}
 }
