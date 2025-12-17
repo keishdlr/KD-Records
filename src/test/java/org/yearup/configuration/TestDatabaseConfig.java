@@ -44,7 +44,7 @@ public class TestDatabaseConfig
     public void setup() {
 
         try(Connection connection = DriverManager.getConnection(serverUrl + "/sys", username, password);
-            Statement statement = connection.createStatement();
+            Statement statement = connection.createStatement()
         )
         {
             statement.execute("DROP DATABASE IF EXISTS " + testDb + ";");
@@ -57,7 +57,7 @@ public class TestDatabaseConfig
     public void cleanup() {
 
         try(Connection connection = DriverManager.getConnection(serverUrl + "/sys", username, password);
-            Statement statement = connection.createStatement();
+            Statement statement = connection.createStatement()
         )
         {
             statement.execute("DROP DATABASE IF EXISTS " + testDb + ";");

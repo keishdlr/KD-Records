@@ -19,8 +19,8 @@ import java.util.List;
 @CrossOrigin
 public class CategoriesController
 {
-    private CategoryDao categoryDao;
-    private ProductDao productDao;
+    private final CategoryDao categoryDao;
+    private final ProductDao productDao;
 
 
     // ✅create an Autowired controller to inject the categoryDao and ProductDao
@@ -40,7 +40,7 @@ public class CategoriesController
 
     // ✅add the appropriate annotation for a get action
     @GetMapping
-    public Category getById(@PathVariable int id)
+    public int getById(@PathVariable int id)
     {
         // ✅get the category by id
         return categoryDao.getById(id);

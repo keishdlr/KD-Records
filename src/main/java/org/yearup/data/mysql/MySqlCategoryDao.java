@@ -32,7 +32,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
                         SELECT *
                         FROM categories
                         """);
-                ResultSet results = query.executeQuery();
+                ResultSet results = query.executeQuery()
         ){
             while(results.next()){
                 Category category = new Category();
@@ -49,10 +49,10 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     }
 
     @Override
-    public int getById(int categoryId)
+    public int getById(int catID)
     {
         // ✅get category by id
-        Category catID = new Category();
+        Category category = new Category();
 
         try(
                 Connection conn = dataSource.getConnection();
@@ -66,19 +66,19 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
                 """)
         ){
 
-        query.setInt(1,categoryId);
+        query.setInt(1, catID);
 
         ResultSet results = query.executeQuery();
 
             if(results.next()){
-            catID.setCategoryId(results.getInt("Category_id"));
-            catID.setName(results.getString("Name"));
-            catID.setDescription(results.getString("Description"));
+            category.setCategoryId(results.getInt("CategoryID"));
+            category.setName(results.getString("Name"));
+            category.setDescription(results.getString("Description"));
             }else{
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
         }catch(SQLException e){
-        System.out.println(categoryId + " :NOT FOUND");
+            System.out.println(category + " :NOT FOUND");
         }
         return catID;
     }
@@ -107,7 +107,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         // ✅update category
         try(
                 Connection conn = dataSource.getConnection();
-                // 'coalese' returns first non-null value, can take more than one argument
+                // 'coalesce' returns first non-null value, can take more than one argument
                 PreparedStatement query = conn.prepareStatement("""
                   UPDATE
                         categories
@@ -153,19 +153,19 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         }
     }
 
+    //mapRow: iterates over each result, calls maRow for each and returns objects as a list
     private Category mapRow(ResultSet row) throws SQLException
     {
         int categoryID = row.getInt("categoryID");
         String name = row.getString("Name");
         String description = row.getString("description");
 
-        Category category = new Category(categoryID)
+        Category category = new Category()
         {{
             setCategoryId(categoryID);
             setName(name);
             setDescription(description);
         }};
-
         return category;
     }
 }
