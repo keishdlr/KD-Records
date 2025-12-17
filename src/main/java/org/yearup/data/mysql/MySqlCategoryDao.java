@@ -29,7 +29,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
         try(
                 Connection conn = dataSource.getConnection();
                 PreparedStatement query = conn.prepareStatement("""
-                        SELECT *
+                        SELECT category_id, name, description
                         FROM categories
                         """);
                 ResultSet results = query.executeQuery()
@@ -156,7 +156,7 @@ public class MySqlCategoryDao extends MySqlDaoBase implements CategoryDao
     //mapRow: iterates over each result, calls maRow for each and returns objects as a list
     private Category mapRow(ResultSet row) throws SQLException
     {
-        int categoryID = row.getInt("categoryID");
+        int categoryID = row.getInt("category_id");
         String name = row.getString("Name");
         String description = row.getString("description");
 

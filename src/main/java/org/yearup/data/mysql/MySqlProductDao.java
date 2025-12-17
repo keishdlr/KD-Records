@@ -160,7 +160,6 @@ public class MySqlProductDao extends MySqlDaoBase implements ProductDao
     @Override
     public void update(int productId, Product product)
     {
-        // update creates a new product because id is null.
         String sql = "UPDATE products" +
                 " SET name = ? " +
                 "   , price = ? " +

@@ -31,7 +31,7 @@ public class CategoriesController
     }
 
     //✅ add the appropriate annotation for a get action
-    @GetMapping("/api/records")
+    @GetMapping("")
     public List<Category> getAll()
     {
         // ✅find and return all categories
@@ -39,7 +39,7 @@ public class CategoriesController
     }
 
     // ✅add the appropriate annotation for a get action
-    @GetMapping
+    @GetMapping("{id}")
     public int getById(@PathVariable int id)
     {
         // ✅get the category by id
