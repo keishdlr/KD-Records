@@ -53,10 +53,19 @@ public class ShoppingCartController
 
     // add a POST method to add a product to the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
-    @PostMapping
-    public ShoppingCart addToCart(){
+    @PostMapping("/cart/products/{productId}")
+    public ShoppingCart addToCart(@PathVariable int productId, @RequestBody ShoppingCartItem newItem,Principal principal){
 
-        return ShoppingCart;
+        String username = principal.getName();
+
+        User user = userDao.getByUserName(username);
+        int userId = user.getId();
+
+        ShoppingCart cart = shoppingCartDao.getByUserId(userId);
+        cart.add(newItem);
+        shoppingCartDao.addItemToCart(userId, productId, newItem.getQuantity());
+
+        return cart;
     }
 
 
@@ -92,10 +101,18 @@ public class ShoppingCartController
 
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
-    @DeleteMapping
-    public ShoppingCart delete(){
+    @DeleteMapping("/cart")
+    public ShoppingCart clearCart (Principal principal){
 
-        return ShoppingCart;
+        String username = principal.getName();
+
+        User user = userDao.getByUserName(username);
+        int userId = user.getId();
+
+        //clear all items in cart
+        shoppingCartDao.clearCart(userId);
+
+        //return empty car project
+        return new ShoppingCart();
     }
-
 }

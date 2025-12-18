@@ -15,4 +15,7 @@ public interface ShoppingCartDao
     Map<Integer,ShoppingCartItem> getItemsByUserId(int userId);
 
     void updateItemQuantity(int userId, int productId, int quantity);
+
+    void addItemToCart(int userId, int productId, int quantity);
+    void clearCart(int userId);
 }
