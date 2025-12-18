@@ -13,4 +13,6 @@ public interface ShoppingCartDao
 
     //shoppingcart class stores map item, so shoppingcartdao has to return the same
     Map<Integer,ShoppingCartItem> getItemsByUserId(int userId);
+
+    void updateItemQuantity(int userId, int productId, int quantity);
 }

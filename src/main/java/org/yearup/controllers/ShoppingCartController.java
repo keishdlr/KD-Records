@@ -1,10 +1,7 @@
 package org.yearup.controllers;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.yearup.data.ProductDao;
 import org.yearup.data.ShoppingCartDao;
@@ -58,7 +55,7 @@ public class ShoppingCartController
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
     @PostMapping
     public ShoppingCart addToCart(){
-        List<> cart =
+
         return ShoppingCart;
     }
 
@@ -66,12 +63,32 @@ public class ShoppingCartController
     // add a PUT method to update an existing product in the cart - the url should be
     // https://localhost:8080/cart/products/15 (15 is the productId to be updated)
     // the BODY should be a ShoppingCartItem - quantity is the only value that will be updated
-    @PutMapping
-    public ShoppingCart update(){
+    @PutMapping("/cart/products/{productId}")
+    public ShoppingCart updateProductInCart(@PathVariable int productId,
+                                            @RequestBody ShoppingCartItem updatedItem, Principal principal)
+    {
+        // 1. Get the logged-in username
+        String username = principal.getName();
 
-        return ShoppingCart;
+        // 2. Look up the user
+        User user = userDao.getByUserName(username);
+        int userId = user.getId();
+
+        // 3. Get the user's cart
+        ShoppingCart cart = shoppingCartDao.getByUserId(userId);
+
+        // 4. Get the existing item from the cart
+        ShoppingCartItem existingItem = cart.get(productId);
+
+        // 5. Update ONLY the quantity
+        existingItem.setQuantity(updatedItem.getQuantity());
+
+        // 6. Save the updated item in the database
+        shoppingCartDao.updateItemQuantity(userId, productId, existingItem.getQuantity());
+
+        // 7. Return the updated cart
+        return cart;
     }
-
 
     // add a DELETE method to clear all products from the current users cart
     // https://localhost:8080/cart
