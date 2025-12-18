@@ -13,6 +13,7 @@ import org.yearup.models.ShoppingCart;
 import org.yearup.models.User;
 
 import java.security.Principal;
+import java.util.List;
 
 // ✅convert this class to a REST controller
 // only logged in users should have access to these actions
@@ -36,8 +37,9 @@ public class ShoppingCartController
             User user = userDao.getByUserName(userName);
             int userId = user.getId();
 
-            // use the shoppingcartDao to get all items in the cart and return the cart
-            return null;
+            //✅ use the shoppingcartDao to get all items in the cart and return the cart
+            ShoppingCart cart = shoppingCartDao.getByUserId(userId);
+            return cart;
         }
         catch(Exception e)
         {
@@ -49,7 +51,7 @@ public class ShoppingCartController
     // https://localhost:8080/cart/products/15 (15 is the productId to be added
     @PostMapping
     public ShoppingCart addToCart(){
-
+        List<> cart =
         return ShoppingCart;
     }
 
