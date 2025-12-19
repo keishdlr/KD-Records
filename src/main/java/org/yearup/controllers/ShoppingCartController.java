@@ -1,5 +1,6 @@
 package org.yearup.controllers;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -11,12 +12,12 @@ import org.yearup.models.ShoppingCartItem;
 import org.yearup.models.User;
 
 import java.security.Principal;
-import java.util.List;
 import java.util.Map;
 
 // ✅convert this class to a REST controller
-// only logged in users should have access to these actions
+// only logged-in users should have access to these actions
 @RestController
+@RequestMapping("/cart")
 public class ShoppingCartController
 {
     // a shopping cart requires
@@ -24,13 +25,22 @@ public class ShoppingCartController
     private UserDao userDao;
     private ProductDao productDao;
 
+    @Autowired
+    public ShoppingCartController(ShoppingCartDao shoppingCartDao,
+                                  UserDao userDao,
+                                  ProductDao productDao) {
+        this.shoppingCartDao = shoppingCartDao;
+        this.userDao = userDao;
+        this.productDao = productDao;
+    }
 
     // each method in this controller requires a Principal object as a parameter
+    @GetMapping
     public ShoppingCart getCart(Principal principal)
     {
         try
         {
-            // get the currently logged in username
+            // get the currently logged-in username
             String userName = principal.getName();
             // find database user by userId
             User user = userDao.getByUserName(userName);
@@ -104,15 +114,20 @@ public class ShoppingCartController
     @DeleteMapping("/cart")
     public ShoppingCart clearCart (Principal principal){
 
-        String username = principal.getName();
+        try {
+            String username = principal.getName();
 
-        User user = userDao.getByUserName(username);
-        int userId = user.getId();
+            User user = userDao.getByUserName(username);
+            int userId = user.getId();
 
-        //clear all items in cart
-        shoppingCartDao.clearCart(userId);
+            //clear all items in cart
+            shoppingCartDao.clearCart(userId);
 
-        //return empty car project
-        return new ShoppingCart();
+            //return empty car project
+            return new ShoppingCart();
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 }
