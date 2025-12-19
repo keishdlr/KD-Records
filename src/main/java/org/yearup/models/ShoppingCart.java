@@ -6,6 +6,8 @@ import java.util.Map;
 
 public class ShoppingCart
 {
+    private int userId;
+
     private Map<Integer, ShoppingCartItem> items = new HashMap<>();
 
     public Map<Integer, ShoppingCartItem> getItems()
@@ -33,6 +35,12 @@ public class ShoppingCart
         return items.get(productId);
     }
 
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) { this.userId = userId; }
+
     public BigDecimal getTotal()
     {
         BigDecimal total = items.values()
@@ -42,5 +50,4 @@ public class ShoppingCart
 
         return total;
     }
-
 }

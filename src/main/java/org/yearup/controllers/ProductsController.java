@@ -3,6 +3,7 @@ package org.yearup.controllers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.yearup.models.Product;
@@ -19,19 +20,17 @@ public class ProductsController
     private final ProductDao productDao;
 
     @Autowired
-    public ProductsController(ProductDao productDao)
-    {
+    public ProductsController(ProductDao productDao) {
         this.productDao = productDao;
     }
 
-    @GetMapping("")
+    @GetMapping("/products")
     @PreAuthorize("permitAll()")
     public List<Product> search(@RequestParam(name="cat", required = false) Integer categoryId,
                                 @RequestParam(name="minPrice", required = false) BigDecimal minPrice,
                                 @RequestParam(name="maxPrice", required = false) BigDecimal maxPrice,
                                 @RequestParam(name="subCategory", required = false) String subCategory
-                                )
-    {
+    ){
         try
         {
             return productDao.search(categoryId, minPrice, maxPrice, subCategory);
@@ -40,6 +39,7 @@ public class ProductsController
         {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops 1... our bad.");
         }
+
     }
 
     @GetMapping("{id}")

@@ -84,7 +84,6 @@ public class MySqlProfileDao extends MySqlDaoBase implements ProfileDao
                 if (rs.next())
                 {
                     Profile profile = new Profile();
-                    profile.setUserId(rs.getInt("profile_id"));
                     profile.setUserId(rs.getInt("user_id"));
                     profile.setFirstName(rs.getString("first_name"));
                     profile.setLastName(rs.getString("last_name"));

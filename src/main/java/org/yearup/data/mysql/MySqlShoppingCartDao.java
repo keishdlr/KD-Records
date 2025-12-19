@@ -6,7 +6,6 @@ import org.yearup.data.ShoppingCartDao;
 import org.yearup.models.Product;
 import org.yearup.models.ShoppingCart;
 import org.yearup.models.ShoppingCartItem;
-
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -27,19 +26,15 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
     @Override
     public ShoppingCart getByUserId(int userId) {
-        // Create a ShoppingCart wrapper object
         ShoppingCart cart = new ShoppingCart();
-
-        // Reuse your existing getItemsByUserId
-        Map<Integer, ShoppingCartItem> items = getItemsByUserId(userId);
-        cart.setItems(items);
-
+        cart.setUserId(userId);
+        cart.setItems(getItemsByUserId(userId));
         return cart;
     }
 
     @Override
     public void addItemToCart (int userId, int productId, int quantity) {
-        String sql = "INSERT INTO cart_items (user_id, product_id, quantity) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO shopping_cart (user_id, product_id, quantity) VALUES (?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -53,7 +48,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
     @Override
     public void clearCart(int userId) {
-        String sql = "DELETE FROM cart_items WHERE user_id = ?";
+        String sql = "DELETE FROM shopping_cart WHERE user_id = ?";
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, userId);
@@ -85,7 +80,7 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
     @Override
     public Map<Integer, ShoppingCartItem> getItemsByUserId(int userId) {
         String sql = "SELECT * FROM shopping_cart WHERE user_id = ?";
-        Map<Integer, ShoppingCartItem> cart = new HashMap<>();
+        Map<Integer, ShoppingCartItem> items = new HashMap<>();
 
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -98,14 +93,35 @@ public class MySqlShoppingCartDao extends MySqlDaoBase implements ShoppingCartDa
 
                     ShoppingCartItem item = new ShoppingCartItem();
                     item.setProduct(product);
-                    item.setQuantity(rs.getInt("quantity"));
+                    item.setQuantity(quantity);
 
-                    cart.put(item.getProductId(), item);
+                    items.put(item.getProductId(), item);
                 }
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error fetching cart for userId " + userId, e);
+            throw new RuntimeException("Error fetching items for userId " + userId, e);
         }
-        return cart;
+        return items;
     }
+
+    public Product getById(int productId) {
+        String sql = "SELECT * FROM products WHERE product_id = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, productId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Product product = new Product();
+                    product.setProductId(rs.getInt("product_id"));
+                    product.setName(rs.getString("name"));
+                    product.setPrice(rs.getBigDecimal("price"));
+                    return product;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching product " + productId, e);
+        }
+        return null;
+    }
+
 }
