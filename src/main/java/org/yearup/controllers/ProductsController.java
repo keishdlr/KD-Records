@@ -39,7 +39,6 @@ public class ProductsController
         {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Oops 1... our bad.");
         }
-
     }
 
     @GetMapping("{id}")

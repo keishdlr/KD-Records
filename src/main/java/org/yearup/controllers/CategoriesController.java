@@ -76,7 +76,6 @@ public class CategoriesController
         categoryDao.update(id, category);
     }
 
-
     //✅ add annotation to call this method for a DELETE action - the url path must include the categoryId
     //✅ add annotation to ensure that only an ADMIN can call this function
     @DeleteMapping("{id}")
